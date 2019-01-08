@@ -20,6 +20,7 @@ public class Index {
     public String index(@RequestParam String userName, String password, String phone) {
         User user = new User(userName, password, phone);
         userDao.insert(user);
+
         return userDao.selectUsers().toString() + service.toConfig();
     }
 
