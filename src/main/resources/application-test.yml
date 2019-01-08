@@ -1,0 +1,5 @@
+
+# 测试参数配置
+testconfig:
+  url: http://apmapi.tuandai.com
+  username: test
