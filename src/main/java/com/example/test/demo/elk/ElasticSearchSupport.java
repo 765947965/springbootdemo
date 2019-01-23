@@ -9,7 +9,6 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -29,10 +28,10 @@ public class ElasticSearchSupport {
     private TransportClient client;
 
     private ElasticSearchSupport() throws Exception {
-        Settings settings = Settings.builder().put("cluster.name", "apm-mobile")//集群名称
+        Settings settings = Settings.builder().put("cluster.name", "application-apm")//集群名称
                 .build();
         client = new PreBuiltTransportClient(settings)
-                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("10.100.14.152"), 9300));
+                .addTransportAddress(new TransportAddress(InetAddress.getByName("10.100.97.72"), 9300));
     }
 
     /*** 获取数据链路层实例 ***/
