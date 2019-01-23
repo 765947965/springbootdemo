@@ -45,10 +45,16 @@ public class ElasticSearchSupport {
                         .field("type", "date")
                         .field("format", "yyyy-MM-dd HH:mm:ss.SSS||yyy-MM-dd||epoch_millis")
                         .endObject()
+                        .startObject("serviceName")
+                        .field("type", "keyword")
+                        .endObject()
+                        .startObject("messageBase.type")
+                        .field("type", "keyword")
+                        .endObject()
                         .endObject()
                         .endObject();
                 client.admin()
-                        .indices().prepareCreate("log4j-201901242").addMapping("log4j", builder).execute().actionGet();
+                        .indices().prepareCreate(index).addMapping("log4j", builder).execute().actionGet();
             } catch (Exception e) {
                 e.printStackTrace();
             }
