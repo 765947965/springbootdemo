@@ -19,7 +19,7 @@ public class Index {
 
     @RequestMapping("/")
     public String index() {
-        return "index";
+        return "OK";
     }
 
     @RequestMapping("/add")
