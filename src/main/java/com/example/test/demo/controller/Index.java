@@ -1,5 +1,6 @@
 package com.example.test.demo.controller;
 
+import com.example.test.demo.elk.ElasticSearchSupport;
 import com.example.test.demo.mysql.dao.TestConfigService;
 import com.example.test.demo.mysql.dao.UserDao;
 import com.example.test.demo.mysql.model.User;
@@ -17,11 +18,8 @@ public class Index {
     private UserDao userDao;
 
     @RequestMapping("/")
-    public String index(@RequestParam String userName, String password, String phone) {
-        User user = new User(userName, password, phone);
-        userDao.insert(user);
-
-        return userDao.selectUsers().toString() + service.toConfig();
+    public String index() {
+        return "index";
     }
 
     @RequestMapping("/add")
@@ -43,5 +41,15 @@ public class Index {
         user.setUserId(userId);
         userDao.updateUser(user);
         return userDao.selectUsers().toString();
+    }
+
+    @RequestMapping("/elk")
+    public String elk() {
+        try {
+            ElasticSearchSupport.getInstance().insert();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "elk";
     }
 }

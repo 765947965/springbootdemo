@@ -1,0 +1,182 @@
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "range": {
+            "appNetworkInfo.fetchStartDate": {
+              "from": 1547761987134,
+              "to": 1547776387134,
+              "include_lower": true,
+              "include_upper": true,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "bool": {
+            "must_not": [
+              {
+                "term": {
+                  "appNetworkInfo.requestUrl.keyword": {
+                    "value": "",
+                    "boost": 1.0
+                  }
+                }
+              }
+            ],
+            "disable_coord": false,
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must_not": [
+              {
+                "term": {
+                  "appNetworkInfo.requestDomains": {
+                    "value": "",
+                    "boost": 1.0
+                  }
+                }
+              }
+            ],
+            "disable_coord": false,
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "range": {
+            "appNetworkInfo.fetchTime": {
+              "from": 0,
+              "to": 9223372036854775807,
+              "include_lower": true,
+              "include_upper": true,
+              "boost": 1.0
+            }
+          }
+        }
+      ],
+      "disable_coord": false,
+      "adjust_pure_negative": true,
+      "boost": 1.0
+    }
+  },
+  "sort": [
+    {
+      "appNetworkInfo.fetchStartDate": {
+        "order": "desc"
+      }
+    }
+  ],
+  "aggregations": {
+    "48cf7534-3254-42f3-85be-f1944ebfc065": {
+      "filter": [
+        {
+          "bool": {
+            "should": [
+              {
+                "bool": {
+                  "filter": [
+                    {
+                      "term": {
+                        "baseInfo.deviceType": {
+                          "value": 2,
+                          "boost": 1.0
+                        }
+                      }
+                    },
+                    {
+                      "term": {
+                        "appNetworkInfo.networkStatusCode": {
+                          "value": 4,
+                          "boost": 1.0
+                        }
+                      }
+                    }
+                  ],
+                  "disable_coord": false,
+                  "adjust_pure_negative": true,
+                  "boost": 1.0
+                }
+              },
+              {
+                "bool": {
+                  "filter": [
+                    {
+                      "term": {
+                        "baseInfo.deviceType": {
+                          "value": 1,
+                          "boost": 1.0
+                        }
+                      }
+                    },
+                    {
+                      "range": {
+                        "appNetworkInfo.networkStatusCode": {
+                          "from": 200,
+                          "to": 299,
+                          "include_lower": true,
+                          "include_upper": true,
+                          "boost": 1.0
+                        }
+                      }
+                    }
+                  ],
+                  "disable_coord": false,
+                  "adjust_pure_negative": true,
+                  "boost": 1.0
+                }
+              }
+            ],
+            "disable_coord": false,
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },{
+          "range": {
+            "appNetworkInfo.respondTime": {
+              "from": 1,
+              "to": 3051,
+              "include_lower": true,
+              "include_upper": true,
+              "boost": 1.0
+            }
+          }
+        }
+      ],
+      "aggregations": {
+        "5a76d587-7550-4b61-9afb-2682f2d44a4f": {
+          "date_histogram": {
+            "field": "appNetworkInfo.fetchStartDate",
+            "interval": 240000,
+            "offset": 0,
+            "order": {
+              "_key": "asc"
+            },
+            "keyed": false,
+            "min_doc_count": 0,
+            "extended_bounds": {
+              "min": 1547761987134,
+              "max": 1547776387134
+            }
+          },
+          "aggregations": {
+            "17387003-9924-47a5-a9d9-2df5e6e4cb83": {
+              "aggregations": {
+                "92612a34-b147-4885-998d-1d9abdfd9574": {
+                  "avg": {
+                    "field": "appNetworkInfo.respondTime"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
