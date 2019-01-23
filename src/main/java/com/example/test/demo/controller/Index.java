@@ -46,7 +46,7 @@ public class Index {
     @RequestMapping("/elk")
     public String elk() {
         try {
-            ElasticSearchSupport.getInstance().insert();
+//            ElasticSearchSupport.getInstance().insert();
         } catch (Exception e) {
             e.printStackTrace();
         }

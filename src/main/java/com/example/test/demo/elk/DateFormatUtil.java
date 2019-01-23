@@ -8,6 +8,7 @@ import java.util.TimeZone;
 
 public class DateFormatUtil {
     private static final String MS_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
+    private static final SimpleDateFormat indexFormat = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
     private static SimpleDateFormat eightFormat = new SimpleDateFormat(MS_PATTERN, Locale.CHINA);
 
 
@@ -22,5 +23,9 @@ public class DateFormatUtil {
     public static String zeroToEight(long time) {
         return eightFormat.format(new Date(time));
 
+    }
+
+    public static String getIndex(long time){
+        return indexFormat.format(new Date(time));
     }
 }
