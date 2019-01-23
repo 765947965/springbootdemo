@@ -26,7 +26,6 @@ public class ElasticSearchSupport {
                     .build();
             client = new PreBuiltTransportClient(settings)
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("10.100.14.152"), 9300));
-            creatIndex();
             run();
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -66,6 +65,7 @@ public class ElasticSearchSupport {
             @Override
             public void run() {
                 while (true) {
+                    creatIndex();
                     insert();
                     try {
                         Thread.sleep(30000);
