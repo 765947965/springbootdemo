@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -27,9 +28,106 @@ public class ElasticSearchSupport {
             client = new PreBuiltTransportClient(settings)
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("10.100.14.152"), 9300));
             run();
+//            run2();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+    }
+
+    private void run2() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    creatIndex2();
+                    insert2();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private void creatIndex2() {
+        String todayIndex = "error-" + DateFormatUtil.getIndex(System.currentTimeMillis()) + "1";
+        if (!todayIndex.equals(index)) {
+            index = todayIndex;
+            try {
+                XContentBuilder builder = XContentFactory.jsonBuilder()
+                        .startObject()
+                        .startObject("properties")
+                        .startObject("sortTimeLong")
+                        .field("type", "date")
+                        .field("format", "yyyy-MM-dd HH:mm:ss.SSS||yyy-MM-dd||epoch_millis")
+                        .endObject()
+                        .startObject("sortTimeFormat")
+                        .field("type", "date")
+                        .field("format", "yyyy-MM-dd'T'HH:mm:ss.SSS+0800||yyyy-MM-dd HH:mm:ss.SSS||yyy-MM-dd||epoch_millis")
+                        .endObject()
+                        .startObject("stackInformation")
+                        .field("type", "keyword")
+                        .endObject()
+                        .startObject("cpuPercentage")
+                        .field("type", "keyword")
+                        .endObject()
+                        .startObject("externalStorage")
+                        .field("type", "keyword")
+                        .endObject()
+                        .startObject("storage")
+                        .field("type", "keyword")
+                        .endObject()
+                        .startObject("memory")
+                        .field("type", "keyword")
+                        .endObject()
+                        .startObject("pageId")
+                        .field("type", "keyword")
+                        .endObject()
+                        .endObject()
+                        .endObject();
+                client.admin()
+                        .indices().prepareCreate(index).addMapping("error", builder).execute().actionGet();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void insert2() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("errorType", new Random().nextInt(2) + 1);
+        map.put("sortTimeLong", System.currentTimeMillis());
+        map.put("sortTimeFormat", millis2Ms(System.currentTimeMillis()));
+        map.put("stackInformation", "at java.lang.Thread.sleep(Native Method)\n" +
+                "at java.lang.Thread.sleep(Thread.java:1031)\n" +
+                "at java.lang.Thread.sleep(Thread.java:985)\n" +
+                "at com.clock.performance.tools.block.BlockSamplesActivity.onClick(BlockSamplesActivity.java:45)\n" +
+                "at android.view.View.performClick(View.java:5198)\n" +
+                "at android.view.View$PerformClick.run(View.java:21147)\n" +
+                "at android.os.Handler.handleCallback(Handler.java:739)\n" +
+                "at android.os.Handler.dispatchMessage(Handler.java:95)\n" +
+                "at android.os.Looper.loop(Looper.java:148)\n" +
+                "at android.app.ActivityThread.main(ActivityThread.java:5417)\n" +
+                "at java.lang.reflect.Method.invoke(Native Method)\n" +
+                "at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:726)\n" +
+                "at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:" + new Random().nextInt(20) + ")");
+        map.put("memory", "2048MB/342.11 MB");
+        map.put("storage", "2048MB/342.11 MB");
+        map.put("externalStorage", "2048MB/342.11 MB");
+        map.put("cpuPercentage", "0.06");
+        map.put("pageId", "com.clock.performance.tools.block.BlockSamplesActivity");
+        client.prepareIndex(index, "error").setSource(map).execute().actionGet();
+    }
+    private static final String MS_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS+0800";
+    private String millis2Ms(long millis) {
+        SimpleDateFormat format = getSimpleDateFormat(MS_PATTERN);
+        return format.format(millis);
+    }
+
+    private SimpleDateFormat getSimpleDateFormat(String pattern) {
+        return new SimpleDateFormat(pattern, Locale.CHINA);
     }
 
     private void creatIndex() {
@@ -60,7 +158,7 @@ public class ElasticSearchSupport {
         }
     }
 
-    private void run(){
+    private void run() {
         new Thread(new Runnable() {
             @Override
             public void run() {
