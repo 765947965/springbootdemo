@@ -6,7 +6,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -14,6 +14,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 
 @Service
 public class ElasticSearchSupport {
@@ -23,10 +24,18 @@ public class ElasticSearchSupport {
 
     private ElasticSearchSupport() {
         try {
+//            Settings settings = Settings.builder().put("cluster.name", "apm-mobile")//集群名称
+//                    .build();
             Settings settings = Settings.builder().put("cluster.name", "apm-mobile")//集群名称
+                    .put("client.transport.sniff", false)//sniff功能
+                    .put("xpack.security.transport.ssl.enabled", false)
+                    .put("xpack.security.user", "apmlog:123456")
                     .build();
-            client = new PreBuiltTransportClient(settings)
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("10.100.14.152"), 9300));
+            client = new PreBuiltXPackTransportClient(settings);
+            client.addTransportAddress(new InetSocketTransportAddress(
+                    InetAddress.getByName("10.100.14.152"), 9300));
+//            client = new PreBuiltTransportClient(settings)
+//                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("10.100.14.152"), 9300));
             run();
 //            run2();
         } catch (UnknownHostException e) {
@@ -120,7 +129,9 @@ public class ElasticSearchSupport {
         map.put("pageId", "com.clock.performance.tools.block.BlockSamplesActivity");
         client.prepareIndex(index, "error").setSource(map).execute().actionGet();
     }
+
     private static final String MS_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS+0800";
+
     private String millis2Ms(long millis) {
         SimpleDateFormat format = getSimpleDateFormat(MS_PATTERN);
         return format.format(millis);
