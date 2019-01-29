@@ -29,7 +29,7 @@ public class ElasticSearchSupport {
             Settings settings = Settings.builder().put("cluster.name", "apm-mobile")//集群名称
                     .put("client.transport.sniff", false)//sniff功能
                     .put("xpack.security.transport.ssl.enabled", false)
-                    .put("xpack.security.user", "apmlog:123456")
+                    .put("xpack.security.user", "apmwriteuser:123456")
                     .build();
             client = new PreBuiltXPackTransportClient(settings);
             client.addTransportAddress(new InetSocketTransportAddress(
